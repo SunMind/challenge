@@ -24,16 +24,17 @@ CREATE TABLE IF NOT EXISTS account_currency (
 
 CREATE TABLE IF NOT EXISTS bank_transaction (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    account_id BIGINT NOT NULL,
-    beneficiary_id BIGINT COMMENT 'Can be null for transactions with no beneficiary',
+    account_number VARCHAR(20) NOT NULL,
+    beneficiary_number VARCHAR(20) COMMENT 'Can be null for transactions with no beneficiary',
     operation_date TIMESTAMP NOT NULL,
     comment TEXT,
     amount DECIMAL(15, 2) NOT NULL,
     currency_id INT NOT NULL,
-    CONSTRAINT fk_transaction_account FOREIGN KEY (account_id) REFERENCES bank_account(id),
-    CONSTRAINT fk_transaction_beneficiary FOREIGN KEY (beneficiary_id) REFERENCES bank_account(id),
+    CONSTRAINT fk_transaction_account FOREIGN KEY (account_number) REFERENCES bank_account(account_number),
+    CONSTRAINT fk_transaction_beneficiary FOREIGN KEY (beneficiary_number) REFERENCES bank_account(account_number),
     CONSTRAINT fk_transaction_currency FOREIGN KEY (currency_id) REFERENCES currency(id)
 );
 
+-- TODO: add indexes?
 -- TODO: add user to link with account
 -- TODO: add currency_rate if transaction is made from one currency to another
