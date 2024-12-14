@@ -10,10 +10,16 @@ CREATE TABLE currency (
 
 CREATE TABLE IF NOT EXISTS bank_account (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    account_number VARCHAR(20) UNIQUE NOT NULL,
+    account_number VARCHAR(20) UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS account_currency (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    account_number VARCHAR(20) NOT NULL,
     currency_id INT NOT NULL,
-    balance DECIMAL(15, 2) NOT NULL DEFAULT 0,
-    CONSTRAINT fk_account_currency FOREIGN KEY (currency_id) REFERENCES currency(id)
+    balance DECIMAL(15, 2) NOT NULL,
+    CONSTRAINT fk_account_currency_account FOREIGN KEY (account_number) REFERENCES bank_account(account_number),
+    CONSTRAINT fk_account_currency_currency FOREIGN KEY (currency_id) REFERENCES currency(id)
 );
 
 CREATE TABLE IF NOT EXISTS bank_transaction (
@@ -29,5 +35,5 @@ CREATE TABLE IF NOT EXISTS bank_transaction (
     CONSTRAINT fk_transaction_currency FOREIGN KEY (currency_id) REFERENCES currency(id)
 );
 
--- TODO: add user
--- TODO: add currency_rate
+-- TODO: add user to link with account
+-- TODO: add currency_rate if transaction is made from one currency to another
