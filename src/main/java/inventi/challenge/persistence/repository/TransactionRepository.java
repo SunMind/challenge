@@ -5,8 +5,10 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface TransactionRepository {
 
@@ -51,4 +53,15 @@ public interface TransactionRepository {
     """)
     List<TransactionEntity> findByDate(@Param("dateFrom") LocalDateTime dateFrom, @Param("dateTo") LocalDateTime dateTo);
 
+    @Select("""
+        SELECT c.code AS currencyCode,\s
+                       SUM(t.amount) AS totalAmount
+                FROM BANK_TRANSACTION t
+                JOIN CURRENCY c ON t.currency_id = c.id
+                WHERE t.account_number = #{accountNumber}
+                AND (#{dateFrom} IS NULL OR t.operation_date >= #{dateFrom})
+                AND (#{dateTo} IS NULL OR t.operation_date <= #{dateTo})
+                GROUP BY c.code
+    """)
+    List<Map<String, BigDecimal>> getBalance(String accountNumber, LocalDateTime dateFrom, LocalDateTime dateTo);
 }
