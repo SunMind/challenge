@@ -1,6 +1,7 @@
 package inventi.challenge.domain.service;
 
 import inventi.challenge.api.model.TransactionCSVRepresentation;
+import inventi.challenge.domain.mapper.TransactionCSVRepresentationMapper;
 import inventi.challenge.domain.mapper.persistence.TransactionEntityMapper;
 import inventi.challenge.domain.util.CsvUtils;
 import inventi.challenge.persistence.model.TransactionEntity;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -32,8 +34,14 @@ public class TransactionService {
         List<TransactionEntity> transactionEntities = transactions.stream()
                 .map(TransactionEntityMapper::entityOf)
                 .toList();
-
         transactionEntities.forEach(transactionRepository::insert);
+    }
+
+    @Transactional
+    public List<TransactionCSVRepresentation> getStatements(LocalDateTime dateFrom, LocalDateTime dateTo) {
+        return transactionRepository.findByDate(dateFrom, dateTo).stream()
+                .map(TransactionCSVRepresentationMapper::entityOf)
+                .toList();
     }
 
 }
